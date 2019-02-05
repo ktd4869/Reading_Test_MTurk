@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
+	<meta name="author" content="Coderthemes">
+
+	<link rel="shortcut icon" href="assets/images/favicon_1.ico">
+
+	<title>Reading Test</title>
+
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/core.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/components.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
+
+	<!-- Ladda buttons css -->
+	<link href="assets/plugins/ladda-buttons/css/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
+
+	<script src="assets/js/modernizr.min.js"></script>
+</head>
+<html>
+
+<body>
+	<div class="row">
+		<div class="col-lg-12">
+			<ul class="nav nav-tabs tabs">
+				<li class="active tab">
+					<a href="#article1" id="articleTab1" data-toggle="tab" aria-expanded="false" onclick="articleChange(1)">
+						<span class="hidden-xs">Article 1</span>
+					</a>
+				</li>
+				<li class="tab">
+					<a href="#article2" id="articleTab2" data-toggle="tab" aria-expanded="false" onclick="articleChange(2)">
+						<span class="hidden-xs">Article 2</span>
+					</a>
+				</li>
+				<li class="tab">
+					<a href="#article3" id="articleTab3" data-toggle="tab" aria-expanded="true" onclick="articleChange(3)">
+						<span class="hidden-xs">Article 3</span>
+					</a>
+				</li>
+				<div style="text-align: right; margin-top: 2%; margin-right: 2%" id="Timer"></div>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="article1" style="height: 80px;overflow: scroll;">
+				</div>
+				<div class="tab-pane" id="article2" style="height: 80px;overflow: scroll;">
+				</div>
+				<div class="tab-pane" id="article3" style="height: 80px;overflow: scroll;">
+				</div>
+			</div>
+		</div>
+
+		<!-- <div class="col-lg-4">
+			<ul class="nav nav-tabs tabs tabs-top">
+				<li id="answerTabStatus" class="active tab">
+					<a id="answerTab" href="#answer1" data-toggle="tab">
+						<span class="visible-xs"><i class="fa fa-home"></i></span>
+						<span class="hidden-xs">Answer Sheet</span>
+					</a>
+				</li>
+				<div style="text-align: right; margin-top: 1%; margin-right: 1%">
+				<div style="display: inline"><button id="preBtn" type="button" class="btn btn-success waves-effect waves-light" style="display: none;">
+					<i class="glyphicon glyphicon-chevron-left"></i>
+				</button></div>
+				<div style="display: inline"><button id="nextBtn" type="button" class="btn btn-success waves-effect waves-light">
+					<i class="glyphicon glyphicon-chevron-right"></i>
+				</button></div>
+				<div style="display: inline"><button id="submitBtn" class="ladda-button btn btn-primary"
+					 data-style="expand-left" style="display: none;"><span class="ladda-label">
+							Submit
+						</span><span class="ladda-spinner"></span>
+					</button></div>
+				</div>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="answer1" style="height: 80px;overflow: scroll;">
+				</div>
+				<div class="tab-pane" id="answer2" style="height: 80px;overflow: scroll;">
+				</div>
+				<div class="tab-pane" id="answer3" style="height: 80px;overflow: scroll;">
+				</div>
+			</div>
+		</div> -->
+	</div>
+
+</body>
+
+<!-- jQuery  -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- init buttn -->
+<script src="assets/plugins/ladda-buttons/js/spin.min.js"></script>
+<script src="assets/plugins/ladda-buttons/js/ladda.min.js"></script>
+<script src="assets/plugins/ladda-buttons/js/ladda.jquery.min.js"></script>
+<!-- init page -->
+<script src="popup.js"></script>
+
+<script>
+	var articleNo = 1;
+	$(document).ready(function () {
+		console.log("1233123");
+		$("#article1").css("height", window.screen.availHeight * 0.78);
+		$("#article2").css("height", window.screen.availHeight * 0.78);
+		$("#article3").css("height", window.screen.availHeight * 0.78);
+		$("#answer1").css("height", window.screen.availHeight * 0.78);
+		$("#answer2").css("height", window.screen.availHeight * 0.78);
+		$("#answer3").css("height", window.screen.availHeight * 0.78);
+		buttonClicked();
+		$("#preBtn").on('click',function(){
+			if(articleNo == 2 || articleNo == 3){
+				$("#articleTab"+String(articleNo-1)).click();
+			}
+		});
+
+		$("#nextBtn").on('click',function(){
+			if(articleNo == 1 || articleNo == 2){
+				$("#articleTab"+String(articleNo+1)).click();
+			}
+		});
+
+		var beginArticle = getUrlParam("beginArticle");
+		setTimer();
+	});
+
+	function articleChange(type) {
+		articleNo = type;
+		var btn = $("#submitBtn");
+		if (type == 3) {
+			btn.show();
+			$("#preBtn").show();
+		}else if(type == 1){
+			$("#preBtn").hide();
+		}else if(type == 2){
+			$("#preBtn").show();
+		}
+		var answerTab = $("#answerTab");
+		var answerTabStatus = $("#answerTabStatus");
+		answerTabStatus.attr("class", "tab");
+		answerTab.attr("href", "#answer" + type);
+		answerTab.click();
+	}
+
+	function buttonClicked() {
+		var l = $('.ladda-button').ladda();
+		l.click(function () {
+			// Start loading
+			l.ladda('start');
+			var time = $('#time').text();
+			var result = answerMatch(Number(getUrlParam("beginArticle")));
+			console.log(result);
+			if (result['correct'] == false) {
+				window.alert('Please answer all questions!');
+			} else {
+				window.location.href = "result.html?result=" + result['correct'] + "&time=" + time+ "&answerSet=" + result['answerSet'];
+			}
+			l.ladda('stop');
+			// Timeout example
+			// Do something in backend and then stop ladda
+			setTimeout(function () {
+				l.ladda('stop');
+			}, 1000)
+		});
+	}
+
+	function initAnswer(type, index) {
+		//修改这里load里的内容改为http
+		$("#answer" + index).load("answerSheet/answerSheet_"+type+".html");
+	}
+
+	function initArticle(type, index) {
+		//修改这里load里的内容改为http
+		$("#article" + index).load("article/article"+type+".html");
+	}
+
+	function answerMatch(type) {
+		var correct = 0;
+		var json;
+		var answerSet = "";
+		var index = 0;
+		$.ajax({
+			type: "GET",
+			url: "answer/answer.json",
+			async: false,
+			success: function (response) {
+				json = response;
+			}
+		});
+		for (var i = type; i < type + 3; i++) {
+			for (var j = 1; j < 6; j++) {
+				index += 1;
+				var answer = $("input[name='a" + i + "q" + j + "']:checked").val();
+				console.log(answer,"a" + i + "q" + j);
+				if (answer == null || answer == undefined) {
+					return false;
+				} else if (String(answer) == String(json["a" + i + "q" + j + ""])) {
+					correct += 1;
+					answerSet += "1";
+				}else{
+					answerSet += '0';
+				}
+			}
+		}
+		var result = {};
+		result['correct'] = correct;
+		result['answerSet'] = answerSet;
+		return result;
+	}
+
+	function getUrlParam(name) {
+		//构造一个含有目标参数的正则表达式对象
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		//匹配目标参数
+		var r = window.location.search.substr(1).match(reg);
+		//返回参数值
+		if (r != null) {
+			return decodeURI(r[2]);
+		}
+		return null;
+	}
+
+	function setTimer() {
+		var start = new Date;
+		setInterval(function () {
+			$('#Timer').html("<h4 class=\"m-t-0 header-title\">Time: <b id=\"time\">" + Math.floor((new Date - start) / 1000) + "</b> S</h4>");
+		}, 1000);
+	}
+</script>
+
+</html>
